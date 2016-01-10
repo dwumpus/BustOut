@@ -1,0 +1,13 @@
+name: BustOut
+main: Main
+version: 0.0.2
+commands:
+   getstate:
+      description: Shows current game state.
+      usage: /<command>
+   getplayercount:
+      description: Shows current game state.
+      usage: /<command>
+   start:
+      description: Shows current game state.
+      usage: /<command>
