@@ -11,25 +11,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+
 /**
  * Created by RogerB on 1/9/2016.
  */
 public final class Main extends JavaPlugin implements Listener {
-    private IGameManager gameState;
+    private IGameManager game;
     private Location startLocation;
+    public static final String ConfigFile = "banned_players.yml";
 
     @Override
     public void onEnable() {
         getLogger().info("Enabling...");
-
         World world = getServer().getWorlds().get(0);
         startLocation = new Location(world, 100, 100, 100, 20, 50);
+        game = new GameManager(2, startLocation);
 
-        gameState = new GameManager(2, startLocation);
-
-        gameState.SetPlayerCountToDefault();
-        Bukkit.getServer().getPluginManager().registerEvents(new JoinGameListener(gameState), this);
+        game.SetPlayerCountToDefault();
+        Bukkit.getServer().getPluginManager().registerEvents(new JoinGameListener(game), this);
         getLogger().info("Enabled");
+
     }
 
     @Override
@@ -41,19 +43,19 @@ public final class Main extends JavaPlugin implements Listener {
 
             case "getstate":
             {
-                player.sendMessage(String.format("The current game state is: %s", gameState.GetCurrentState().toString()));
+                player.sendMessage(String.format("The current game state is: %s", game.GetCurrentState().toString()));
                 break;
             }
 
             case "getplayercount":
             {
-                player.sendMessage(String.format("The current game player count is: %s", gameState.GetCurrentPlayerCount()));
+                player.sendMessage(String.format("The current game player count is: %s", game.GetCurrentPlayerCount()));
                 break;
             }
             case "start":
             {
-                if(gameState.GetCurrentState() == GAME_STATE.GAME_STARTING){
-                    gameState.StartGame();
+                if(game.GetCurrentState() == GAME_STATE.GAME_STARTING){
+                    game.StartGame();
                 }
                 else {
                     player.sendMessage(String.format("Game is not ready to start."));
@@ -72,6 +74,11 @@ public final class Main extends JavaPlugin implements Listener {
     public void onDisable() {
         getLogger().info("Disabling...");
         getLogger().info("Disabled.");
+        try {
+            game.GetConfig().save(ConfigFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -79,4 +86,5 @@ public final class Main extends JavaPlugin implements Listener {
         getLogger().info("Loading...");
         getLogger().info("Loaded.");
     }
+
 }

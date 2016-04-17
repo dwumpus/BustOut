@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BustOut:jar">
+    <output-path>C:/bukkit/plugins</output-path>
+    <root id="archive" name="BustOut.jar">
+      <element id="module-output" name="BustOut" />
+      <element id="extracted-dir" path="C:/bukkit/craftbukkit.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/Config.yml" />
+    </root>
+  </artifact>
+</component>

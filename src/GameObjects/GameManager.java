@@ -3,7 +3,14 @@ package GameObjects;
 import Interfaces.IGameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import static net.minecraft.server.v1_8_R3.MinecraftServer.getServer;
 
 /**
  * Created by RogerB on 1/9/2016.
@@ -18,6 +25,11 @@ public class GameManager implements IGameManager {
         _state = GAME_STATE.WAITING_FOR_PLAYERS;
         _gameReadyCount = playersNeeded;
         _startingLocation = startingLocation;
+
+    }
+
+    public FileConfiguration GetConfig() {
+        return Bukkit.getServer().getPluginManager().getPlugin("BustOut").getConfig();
     }
 
     public GAME_STATE GetCurrentState() {
@@ -75,5 +87,31 @@ public class GameManager implements IGameManager {
         }
         // TODO: 1/9/2016 check some new stuff in 
         _state = GAME_STATE.GAME_RUNNING;
+    }
+
+    public void BanPlayer(String playerName) {
+        GetConfig().set("Banned-Players." + playerName, GetAllowedInTime(30));
+        Bukkit.getServer().getPluginManager().getPlugin("BustOut").saveConfig();
+    }
+
+    public boolean PlayerBanned(String playerName) {
+        Date currentDateTime = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(currentDateTime);
+        Date d = new Date(Date.parse(GetConfig().getString("Banned-Players."+playerName)));
+        if(cal.getTime().before(d)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private String GetAllowedInTime(int minutesToBan) {
+        Date currentDateTime = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(currentDateTime);
+        cal.add(Calendar.MINUTE, minutesToBan);
+        return cal.getTime().toString();
     }
 }
